@@ -1,5 +1,5 @@
 const express = require('express');
-const {createChat, getChat, deleteChat} = require('../controller/chatController')
+const {createChat, getChat, deleteChat, getSingleChat} = require('../controller/chatController')
 const auth = require('../middleware/auth');
 
 
@@ -10,6 +10,9 @@ chatRouter.post('/create',auth, createChat )
 
 // get the chat
 chatRouter.get('/get',auth, getChat )
+
+// get single chat
+chatRouter.get('/get/:chatId', auth, getSingleChat);
 
 
 // delete chat

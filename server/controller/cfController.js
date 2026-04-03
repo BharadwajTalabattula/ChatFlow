@@ -47,9 +47,13 @@ const loginUser = async (req, res)=>{
 
     const {email, password} = req.body;
 
+
     try{
 
         const isUser = await CF.findOne({email})
+     
+            const name = isUser.name;
+
 
         if(!isUser){
             return res.status(400).json({message: "Invalid email"})
@@ -62,8 +66,9 @@ const loginUser = async (req, res)=>{
         }
 
         const token = generateToken(isUser._id)
+    
 
-        return res.status(200).json({sucess: true, token })
+        return res.status(200).json({sucess: true, token, userName: name })
 
 
     }catch(error){

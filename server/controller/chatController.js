@@ -34,13 +34,45 @@ const getChat = async (req, res)=>{
 
 }
 
+const getSingleChat = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { chatId } = req.params;
+
+        const chat = await Chat.findOne({ _id: chatId, userId });
+
+        if (!chat) {
+            return res.status(404).json({
+                success: false,
+                message: "Chat not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            messages: chat.messages,
+            chatId: chat._id,
+            name: chat.name
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 const deleteChat = async(req, res)=>{
 
     try{
         const userId = req.user._id;
         const { chatId } = req.body;
         await Chat.deleteOne({ _id:chatId , userId})
-        return res.status(200).json({success:true, message: "Chat deleted sucessfully" })
+        return res.status(200).json({
+            success: true,
+           message: "Chat deleted sucessfully"
+        });
 
 
     }catch(error){
@@ -50,7 +82,6 @@ const deleteChat = async(req, res)=>{
 }
 
 
-module.exports = {createChat, getChat, deleteChat}
+module.exports = {createChat, getChat, deleteChat, getSingleChat}
 
 
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTBhMTEyYjBhYzk2OGFmZjc4NDA1MCIsImlhdCI6MTc3MTEyMjk4MywiZXhwIjoxNzczNzE0OTgzfQ.4e-XraH4GGx-RKPR7oII9rLXA1XcEk87Ta9ZgI2h10k

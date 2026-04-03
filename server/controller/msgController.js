@@ -1,75 +1,86 @@
-const Chat = require('../model/chatModel')
+const Chat = require('../model/chatModel');
 const CF = require('../model/cfModel');
-const openai = require('../database/openai')
+const axios = require('axios');
 
+require("dotenv").config();
 
 const testMessage = async (req, res) => {
-    try {
+  try {
+    const userId = req.user._id; // ✅ FIXED
 
-        const userId = req.user._id;
-        if (req.user.credits < 1) {
-            return res.status(403).json({ success: false, message: "Not enough credits" })
-        }
-
-        const { chatId, prompt } = req.body;
-
-        const chat = await Chat.findOne({ _id: chatId, userId })
-
-        if (!chat) {
-            return res.status(404).json({ success: false, message: "Chat not found" });
-        }
-
-
-        chat.messages.push({
-            role: "user",
-            content: prompt,
-            timestamp: Date.now(),
-            isImage: false
-        })
-
-
-        const response = await openai.chat.completions.create({
-            model: "gemini-3-flash-preview",
-            messages: [
-                {
-                    role: "user",
-                    content: prompt,
-                },
-            ],
-        });
-
-
-
-        const reply = {
-            ...response.choices[0].message,
-            timestamp: Date.now(),
-            isImage: false,
-
-
-        }
-
-
-        chat.messages.push(reply)
-        await chat.save();
-
-        await CF.updateOne({ _id: userId }, { $inc: { credits: -1 } });
-
-        return res.status(200).json({
-            success: true,
-            reply: chat.messages[chat.messages.length - 1]
-        });
-
-
-
-    } catch (error) {
-
-        return res.status(500).json({ success: false, message: error.message })
-
-
+    if (req.user.credits < 1) {
+      return res.status(403).json({
+        success: false,
+        message: "Not enough credits"
+      });
     }
 
-}
+    const { chatId, prompt } = req.body;
 
+    const chat = await Chat.findOne({ _id: chatId, userId });
 
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat not found"
+      });
+    }
 
-module.exports = { testMessage }
+    // ✅ Save user message
+    chat.messages.push({
+      role: "user",
+      content: prompt,
+      timestamp: Date.now(),
+      isImage: false
+    });
+
+    // 🔥 OpenRouter API
+    const response = await axios.post(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        model: "deepseek/deepseek-chat",
+        messages: [
+          { role: "user", content: prompt }
+        ]
+      },
+      {
+        headers: {
+          "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const aiText =
+      response.data.choices?.[0]?.message?.content || "No response";
+
+    const reply = {
+      role: "assistant",
+      content: aiText,
+      timestamp: Date.now(),
+      isImage: false
+    };
+
+    // ✅ Save AI reply
+    chat.messages.push(reply);
+    await chat.save();
+
+    // ✅ Deduct credits
+    await CF.updateOne({ _id: userId }, { $inc: { credits: -1 } });
+
+    return res.status(200).json({
+      success: true,
+      reply
+    });
+
+  } catch (error) {
+    console.log("ERROR:", error.response?.data || error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: error.response?.data || error.message
+    });
+  }
+};
+
+module.exports = { testMessage };
