@@ -1,11 +1,12 @@
+// client/src/features/chats/chatReducer.js
 export const initialState = {
-    userId: "",
-    chats: [],
-    activeChatId: "",
-    messagesByChat: {} // 🔥 key improvement
-  };
-  
-  export function chatReducer(state, action) {
+  userId: "",
+  chats: [],
+  activeChatId: "",
+  messagesByChat: {} // key improvement
+};
+
+export function chatReducer(state, action) {
     switch (action.type) {
   
       case "CREATE_CHAT":

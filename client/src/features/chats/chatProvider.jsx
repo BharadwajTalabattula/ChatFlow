@@ -1,11 +1,12 @@
+
 import { useReducer } from 'react';
-import { chatReducer, initialState } from "./ChatReducer";
-import * as chatService from "./ChatService";
+import { chatReducer, initialState } from './chatReducer';
+import * as chatService from './chatService';
 import toast from 'react-hot-toast';
-import { ChatContext } from "./ChatContext";
+import { ChatContext } from './ChatContext';
 
 export default function ChatProvider({ children }) {
-    const [state, dispatch] = useReducer(chatReducer, initialState);
+  const [state, dispatch] = useReducer(chatReducer, initialState);
 
 
     // create chat
