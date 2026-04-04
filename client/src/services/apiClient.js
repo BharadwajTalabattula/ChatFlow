@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: import.meta.env.VITE_SERVER_URL,
+    baseURL: 'https://chatflow-7can.onrender.com/api'
 })
 
 apiClient.interceptors.request.use((config) => {
