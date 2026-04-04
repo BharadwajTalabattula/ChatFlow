@@ -51,7 +51,7 @@ const response = await axios.post(
     headers: {
       "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": "http://localhost:3000",   // ← required by OpenRouter
+      "HTTP-Referer": "https://chatflow-7can.onrender.com",   // ← required by OpenRouter
       "X-Title": "ChatFlow"                       // ← required by OpenRouter
     }
   }
