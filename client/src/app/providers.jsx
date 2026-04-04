@@ -1,5 +1,6 @@
 import { AuthProvider } from "../features/auth/authProvider";
- import ChatProvider from "../features/chats/chatProvider";
+// import ChatProvider from "../features/chats/ChatProvider";
+import { ChatProvider } from "../features/chats/ChatProvider";
 
 export default function Providers({children}){
     return(
