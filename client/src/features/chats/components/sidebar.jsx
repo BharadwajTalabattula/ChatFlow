@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { ChatContext } from "../ChatContext";
+import { ChatContext } from "../chatContext";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const { chats, loadChats, deleteChat, selectChat, activeChatId, createChat } =
