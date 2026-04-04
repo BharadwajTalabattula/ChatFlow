@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from '../features/auth/pages/login';
 import Signup from "../features/auth/pages/signup";
-
 import ChatPage from "../features/chats/pages/chatPage"
 import ProtectedRoute from "../shared/components/protectedRoute"
 
