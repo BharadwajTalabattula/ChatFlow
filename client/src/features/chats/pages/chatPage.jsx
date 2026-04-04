@@ -1,6 +1,6 @@
 
-import ChatWindow from "../components/ChatWindow";
-import MessageInput from "../components/MessageInput";
+import ChatWindow from "../components/chatWindow";
+import MessageInput from "../components/messageInput";
 import Layout from "../../../shared/components/Layout";
 
 export default function ChatPage() {

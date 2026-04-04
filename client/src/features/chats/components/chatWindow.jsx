@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useContext } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ChatContext } from "../ChatContext";
-import Typewriter from "./TypeWriter";
+import { ChatContext } from "../chatContext";
+import Typewriter from "./typeWriter";
 
 const markdownComponents = {
   h1: ({ children }) => <h1 className="md-h1">{children}</h1>,
