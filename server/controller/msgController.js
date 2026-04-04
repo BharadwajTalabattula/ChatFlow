@@ -17,7 +17,10 @@ const testMessage = async (req, res) => {
 
     const { chatId, prompt } = req.body;
 
+
     const chat = await Chat.findOne({ _id: chatId, userId });
+
+
 
     if (!chat) {
       return res.status(404).json({
@@ -34,25 +37,28 @@ const testMessage = async (req, res) => {
       isImage: false
     });
 
-    // 🔥 OpenRouter API
-    const response = await axios.post(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        model: "deepseek/deepseek-chat",
-        messages: [
-          { role: "user", content: prompt }
-        ]
-      },
-      {
-        headers: {
-          "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
 
-    const aiText =
-      response.data.choices?.[0]?.message?.content || "No response";
+    // 🔥 OpenRouter API
+const response = await axios.post(
+  "https://openrouter.ai/api/v1/chat/completions",
+  {
+    model: "openrouter/auto" ,  // ← always routes to a working free model
+    messages: [
+      { role: "user", content: prompt }
+    ]
+  },
+  {
+    headers: {
+      "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": "http://localhost:3000",   // ← required by OpenRouter
+      "X-Title": "ChatFlow"                       // ← required by OpenRouter
+    }
+  }
+);
+
+const aiText = response.data.choices?.[0]?.message?.content || "No response";
+      
 
     const reply = {
       role: "assistant",

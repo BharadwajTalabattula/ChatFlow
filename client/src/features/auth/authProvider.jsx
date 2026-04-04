@@ -1,86 +1,88 @@
-
-import { useReducer } from 'react';
+import { useReducer } from "react";
 import { authReducer, initialState } from "./authReducer";
 import * as authService from "./authServices";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import { AuthContext } from "./authContext";
 
-export function AuthProvider({children}){
 
-    let [ state, dispatch] = useReducer(authReducer, initialState);
+export function AuthProvider({ children }) {
 
-    //login 
-    let login = async (data) => {
-      try{
-  
-        let res = await authService.loginUser(data);        
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('userName', res.data.userName);
+  let [state, dispatch] = useReducer(authReducer, initialState);
 
-        dispatch ({
-            type: "LOGIN",
-            payload: {
-              user: res.data.success,
-              token: res.data.token,
-              userName: res.data.userName
-            }
-        })
+  //login
+  let login = async (data) => {
+    try {
+      let res = await authService.loginUser(data);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userName", res.data.userName);
 
-        toast.success("Login successfull...")
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          user: res.data.success,
+          token: res.data.token,
+          userName: res.data.userName,
+        },
+      });
 
-      }catch(error){
-        toast.error(error?.response?.data?.message || error.message);
-      }
+      console.log(res);
 
+      
+      toast.success("Login successfull...");
+      return true
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message);
+      console.log(error?.response?.data?.message || error.message)
     }
+  };
 
-    // login
-    let logout = async() => {
-        try{
-            localStorage.removeItem('token');
-            localStorage.removeItem('userName');
-          dispatch ({
-              type: "LOGOUT"
-          })
-          toast.success("Logout successfull...")
-  
-        }catch(error){
-            toast.error(error?.response?.data?.message || error.message);
-        }
-      }
-  
-    //Signup
+  // login
+  let logout = async () => {
+    try {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userName");
+      dispatch({
+        type: "LOGOUT",
+      });
 
-    let register = async(data)=> {
+      // navigate("/login");
 
-        try{
-            let res = await authService.signupUser(data);
-
-            localStorage.setItem('token', res.data.token);
-    
-            dispatch ({
-                type: "REGISTER",
-                payload: {
-                  user: res.data.success,
-                  token: res.data.token
-                }
-            })
-    
-            toast.success("Signup successfull...")
-    
-          }catch(error){
-            toast.error(error?.response?.data?.message || error.message);
-          }
-    
+      toast.success("Logout successfull...");
+      return true;
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message);
     }
+  };
 
+  //Signup
 
-    return(
-        <>
-   <AuthContext.Provider value={{ ...state, login, logout, register }}>
-      {children}
-    </AuthContext.Provider>
-        </>
-    )
+  let register = async (data) => {
+    try {
+      let res = await authService.signupUser(data);
+
+      localStorage.setItem("token", res.data.token);
+
+      dispatch({
+        type: "REGISTER",
+        payload: {
+          user: res.data.success,
+          token: res.data.token,
+        },
+      });
+
+      // navigate("/login");
+      toast.success("Signup successfull...");
+      return true;
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message);
+    }
+  };
+
+  return (
+    <>
+      <AuthContext.Provider value={{ ...state, login, logout, register }}>
+        {children}
+      </AuthContext.Provider>
+    </>
+  );
 }
-

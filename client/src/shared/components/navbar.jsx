@@ -1,19 +1,68 @@
-
 import { Link } from "react-router-dom";
+import { useAuth } from '../../features/auth/useAuth';
+import { useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
 
 export default function Navbar() {
-    return(
-        <>
-      <div >
-        <nav className="navbar bg-white border " >
-          <div className="container-fluid px-4">
-            <Link to="/" className="navbar-brand  d-flex align-items-center">
-              <span className="fs-4">Chat Flow</span>
-            </Link>
-            {/* <div className='ellipsis px-2 rounded-3'  ><i class="fa-solid fs-3 fa-ellipsis"></i></div> */}
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  async function handleLogout() {
+    let success = await logout();
+    if (success) {
+      navigate('/login');
+    }
+  }
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const userName = localStorage.getItem("userName");
+
+  return (
+    <nav className="navbar">
+      <Link to="/" className="navbar-brand">
+        <i className="fa-solid fa-dice-d6"></i>
+        Chat Flow
+      </Link>
+
+      <div className="navbar-menu" ref={dropdownRef}>
+        <button
+          className={`ellipsis-btn ${open ? "active" : ""}`}
+          onClick={() => setOpen((prev) => !prev)}
+          aria-label="Menu"
+        >
+          <i className="fa-solid fa-ellipsis"></i>
+        </button>
+
+        {open && (
+          <div className="dropdown-card">
+            <div className="dropdown-user">
+              <i className="fa-solid fa-circle-user dropdown-avatar"></i>
+              <div className="dropdown-user-info">
+                <p className="dropdown-username">{userName}</p>
+                <p className="dropdown-role">Account</p>
+              </div>
+            </div>
+
+            <div className="dropdown-actions">
+              <button className="dropdown-btn logout" onClick={handleLogout}>
+                <i className="fa-solid fa-right-from-bracket"></i>
+                Logout
+              </button>
+            </div>
           </div>
-        </nav>
+        )}
       </div>
-    </>
-    )
+    </nav>
+  );
 }

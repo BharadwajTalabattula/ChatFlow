@@ -1,29 +1,29 @@
-const  jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const CF = require('../model/cfModel');
 const bcrypt = require('bcrypt');
 const Chat = require('../model/chatModel')
 
-const generateToken = (id)=>{
+const generateToken = (id) => {
 
-    return jwt.sign({id}, 'cf', {
+    return jwt.sign({ id }, 'cf', {
         expiresIn: "30d"
     })
 
 }
 
 
-const registerUser = async(req, res)=>{
-    const { name, email, password} = req.body;
-    try{
-        const isUser = await CF.findOne({email})
+const registerUser = async (req, res) => {
+    const { name, email, password } = req.body;
+    try {
+        const isUser = await CF.findOne({ email })
 
-        if(isUser){
-           return res.status(409).send({message: "User already exists"}) // check
+        if (isUser) {
+            return res.status(409).send({ message: "User already exists" }) // check
         }
 
         const hashedPass = await bcrypt.hash(password, 10)
 
-        const cfUser = await CF.create({name, email, password : hashedPass})
+        const cfUser = await CF.create({ name, email, password: hashedPass })
 
         await Chat.create({
             userId: cfUser._id,
@@ -35,59 +35,63 @@ const registerUser = async(req, res)=>{
 
         const token = generateToken(cfUser._id)
 
-        return res.status(201).json({success: true, token});
+        return res.status(201).json({ success: true, token });
 
-    }catch(error){
-        return res.status(500).json({message: error.message})
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
 
     }
 }
 
-const loginUser = async (req, res)=>{
+const loginUser = async (req, res) => {
 
-    const {email, password} = req.body;
-
-
-    try{
-
-        const isUser = await CF.findOne({email})
-     
-            const name = isUser.name;
+    const { email, password } = req.body;
+   
 
 
-        if(!isUser){
-            return res.status(400).json({message: "Invalid email"})
+    try {
+
+        const isUser = await CF.findOne({ email })
+
+
+
+
+
+
+        if (!isUser) {
+            return res.status(400).json({ message: "Invalid email" })
         }
 
         const isCheck = await bcrypt.compare(password, isUser.password)
 
-        if(!isCheck){
-            return res.status(400).json({message: "Invalid password"})
+        if (!isCheck) {
+            return res.status(400).json({ message: "Invalid password" })
         }
 
         const token = generateToken(isUser._id)
-    
-
-        return res.status(200).json({sucess: true, token, userName: name })
+        const name = isUser.name;
 
 
-    }catch(error){
-        return res.status(500).json({message: error.message})
+        return res.status(200).json({ sucess: true, token, userName: name })
+
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
 
     }
 
 }
 
 
-const getUser = async(req, res)=>{
-    try{
+const getUser = async (req, res) => {
+    try {
         const user = req.user;
 
-        return res.status(200).json({success: true, user})
-    }catch(error){
-        return res.status(500).json({message: error.message})
+        return res.status(200).json({ success: true, user })
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
     }
 }
 
 
-module.exports = {registerUser, loginUser, getUser}
+module.exports = { registerUser, loginUser, getUser }

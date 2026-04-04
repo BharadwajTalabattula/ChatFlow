@@ -62,7 +62,7 @@ export default function ChatProvider({ children }) {
     const selectChat = async (chatId) => {
       try {
 
-        console.log(chatId)
+   
         dispatch({
           type: "SET_ACTIVE_CHAT",
           payload: chatId

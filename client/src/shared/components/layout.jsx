@@ -12,7 +12,9 @@ export default function Layout({ children }) {
 
       <div className="main">
         <Navbar />
-        <div className="content p-0" style={{ backgroundColor: "#f8f8f8"}}>{children}</div>
+        <div className="content" style={{ backgroundColor: "#f8f8f8", padding: 0 }}>
+  {children}
+</div>
       </div>
 
     </div>
