@@ -1,6 +1,6 @@
 import { useReducer } from "react";
-import { authReducer, initialState } from "./authReducer";
-import * as authService from "./authServices";
+import { authReducer, initialState } from "./AuthReducer";
+import * as authService from "./AuthServices";
 import { AuthContext } from "./authContext";
 import toast from "react-hot-toast";
 
