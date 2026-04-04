@@ -1,4 +1,4 @@
-import Layout from "../../../shared/components/Layout";
+import Layout from "../../../shared/components/layout"; 
 import ChatWindow from "../components/ChatWindow";
 import MessageInput from "../components/MessageInput";
 
