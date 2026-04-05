@@ -59,6 +59,7 @@ const testMessage = async (req, res) => {
 const aiText = response.data.choices?.[0]?.message?.content || "No response";
       
 
+
     const reply = {
       role: "assistant",
       content: aiText,
