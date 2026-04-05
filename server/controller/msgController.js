@@ -39,23 +39,23 @@ const testMessage = async (req, res) => {
 
 
     // 🔥 OpenRouter API
-const response = await axios.post(
-  "https://openrouter.ai/api/v1/chat/completions",
-  {
-    model: "openrouter/auto" ,  // ← always routes to a working free model
-    messages: [
-      { role: "user", content: prompt }
-    ]
-  },
-  {
-    headers: {
-      "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": "https://chatflow-7can.onrender.com",   // ← required by OpenRouter
-      "X-Title": "ChatFlow"                       // ← required by OpenRouter
-    }
-  }
-);
+    const response = await axios.post(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        model: "meta-llama/llama-3.3-70b-instruct:free",  // ← reliable free model
+        messages: [
+          { role: "user", content: prompt }
+        ]
+      },
+      {
+        headers: {
+          "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://chatflow-2.onrender.com/login",  // ← frontend URL here
+          "X-Title": "ChatFlow"
+        }
+      }
+    );
 
 const aiText = response.data.choices?.[0]?.message?.content || "No response";
       
