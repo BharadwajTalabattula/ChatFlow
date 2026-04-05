@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { useAuth } from '../../features/auth/useAuth';
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
+import { ChatContext } from "../../features/chats/chatContext";
 
 export default function Navbar() {
   const { logout } = useAuth();
+  const { createChat } = useContext(ChatContext);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -14,6 +16,11 @@ export default function Navbar() {
     if (success) {
       navigate('/login');
     }
+  }
+
+  async function handleNewChat() {
+    await createChat();
+    setOpen(false);
   }
 
   useEffect(() => {
@@ -46,6 +53,7 @@ export default function Navbar() {
 
         {open && (
           <div className="dropdown-card">
+
             <div className="dropdown-user">
               <i className="fa-solid fa-circle-user dropdown-avatar"></i>
               <div className="dropdown-user-info">
@@ -55,11 +63,17 @@ export default function Navbar() {
             </div>
 
             <div className="dropdown-actions">
+              <button className="dropdown-btn new-chat" onClick={handleNewChat}>
+                <i className="fa-regular fa-pen-to-square"></i>
+                New Chat
+              </button>
+
               <button className="dropdown-btn logout" onClick={handleLogout}>
                 <i className="fa-solid fa-right-from-bracket"></i>
                 Logout
               </button>
             </div>
+
           </div>
         )}
       </div>

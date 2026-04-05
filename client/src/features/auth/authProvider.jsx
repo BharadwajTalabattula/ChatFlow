@@ -1,17 +1,32 @@
-import { useReducer } from "react";
+import { useReducer, useEffect, useState } from "react";
 import { authReducer, initialState } from "./authReducer";
 import * as authService from "./authServices";
 import { AuthContext } from "./authContext";
 import toast from "react-hot-toast";
 
 export function AuthProvider({ children }) {
+  const [state, dispatch] = useReducer(authReducer, initialState);
+  const [loading, setLoading] = useState(true); // ← true until auth is checked
 
-  let [state, dispatch] = useReducer(authReducer, initialState);
+  // On app start — restore session from localStorage
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userName = localStorage.getItem("userName");
 
-  //login
-  let login = async (data) => {
+    if (token) {
+      dispatch({
+        type: "LOGIN",
+        payload: { token, userName, user: true },
+      });
+    }
+
+    setLoading(false); // ← done checking, hide loading screen
+  }, []);
+
+  // Login
+  const login = async (data) => {
     try {
-      let res = await authService.loginUser(data);
+      const res = await authService.loginUser(data);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userName", res.data.userName);
 
@@ -24,64 +39,55 @@ export function AuthProvider({ children }) {
         },
       });
 
-      console.log(res);
-
-      
-      toast.success("Login successfull...");
-      return true
-    } catch (error) {
-      toast.error(error?.response?.data?.message || error.message);
-      console.log(error?.response?.data?.message || error.message)
-    }
-  };
-
-  // login
-  let logout = async () => {
-    try {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userName");
-      dispatch({
-        type: "LOGOUT",
-      });
-
-      // navigate("/login");
-
-      toast.success("Logout successfull...");
+      toast.success("Login successful...");
       return true;
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
+      return false;
     }
   };
 
-  //Signup
-
-  let register = async (data) => {
+  // Logout
+  const logout = async () => {
     try {
-      let res = await authService.signupUser(data);
+      localStorage.removeItem("token");
+      localStorage.removeItem("userName");
+      dispatch({ type: "LOGOUT" });
+      toast.success("Logout successful...");
+      return true;
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message);
+      return false;
+    }
+  };
 
+  // Register
+  const register = async (data) => {
+    try {
+      const res = await authService.signupUser(data);
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userName", res.data.userName);
 
       dispatch({
         type: "REGISTER",
         payload: {
           user: res.data.success,
           token: res.data.token,
+          userName: res.data.userName,
         },
       });
 
-      // navigate("/login");
-      toast.success("Signup successfull...");
+      toast.success("Signup successful...");
       return true;
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
+      return false;
     }
   };
 
   return (
-    <>
-      <AuthContext.Provider value={{ ...state, login, logout, register }}>
-        {children}
-      </AuthContext.Provider>
-    </>
+    <AuthContext.Provider value={{ ...state, loading, login, logout, register }}>
+      {children}
+    </AuthContext.Provider>
   );
 }

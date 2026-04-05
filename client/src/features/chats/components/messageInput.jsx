@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { ChatContext } from "../chatContext";
+import toast from 'react-hot-toast';
 
 export default function MessageInput() {
   const [input, setInput] = useState("");
@@ -11,11 +12,15 @@ export default function MessageInput() {
     setInput("");
   };
 
+  function handleFiles(){
+    toast.error("Not available yet..")
+  }
+
   return (
     <div className="message-input-wrapper ">
       <div className="message-input-inner">
         <div className="input-group custom-float">
-          <span className="input-group-text left-icon">+</span>
+          <span className="input-group-text left-icon" onClick={handleFiles}>+</span>
 
           <textarea
             className="form-control message-textarea"
@@ -31,7 +36,7 @@ export default function MessageInput() {
           />
 
           <span className="input-group-text right-icon send-btn" onClick={handleSend}>
-            <i className="fa-brands fa-telegram"></i>
+            <i className="fa-brands fs-1 fa-telegram"></i>
           </span>
         </div>
       </div>
