@@ -79,14 +79,12 @@ const aiText = response.data.choices?.[0]?.message?.content || "No response";
       reply
     });
 
-  } catch (error) {
-    console.log("ERROR:", error.response?.data || error.message);
-
+  }  catch (error) {
+    console.log("FULL ERROR:", error.response?.data || error.message || error);
     return res.status(500).json({
       success: false,
       message: error.response?.data || error.message
     });
   }
-};
-
+}
 module.exports = { testMessage };
