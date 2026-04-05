@@ -51,7 +51,7 @@ const testMessage = async (req, res) => {
         headers: {
           "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://chatflow-2.onrender.com/login",  // ← frontend URL here
+          "HTTP-Referer": "https://chatflow-2.onrender.com",  // ← frontend URL here
           "X-Title": "ChatFlow"
         }
       }
